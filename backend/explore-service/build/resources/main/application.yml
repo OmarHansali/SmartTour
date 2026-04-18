@@ -1,0 +1,47 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: explore-service
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/smarttour
+    username: smarttour_user
+    password:
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+    show-sql: false
+  
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000
+      jedis:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+  
+  cache:
+    type: none
+
+jwt:
+  secret: smarttour-secret-key-for-jwt-token-generation-please-change-in-production
+  expiration: 86400000  # 24 hours in milliseconds
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate.spatial: DEBUG
+    com.smarttour: DEBUG
+

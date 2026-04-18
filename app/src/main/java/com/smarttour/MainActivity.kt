@@ -1,15 +1,23 @@
-package com.smarttour.data
+package com.smarttour
 
-import com.smarttour.domain.POI
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.smarttour.ui.SmartTourApp
+import com.smarttour.ui.SmartTourViewModel
+import com.smarttour.ui.theme.SmartTourTheme
+import dagger.hilt.android.AndroidEntryPoint
 
-fun POIDto.toDomain(): POI {
-    return POI(
-        id = id,
-        name = name,
-        description = description,
-        latitude = latitude,
-        longitude = longitude,
-        category = category,
-        imageUrl = imageUrl
-    )
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            SmartTourTheme {
+                val viewModel: SmartTourViewModel = hiltViewModel()
+                SmartTourApp(viewModel = viewModel)
+            }
+        }
+    }
 }

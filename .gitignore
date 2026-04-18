@@ -3,6 +3,7 @@
 /.gradle
 /captures
 /local.properties
+/app/local.properties
 
 # IntelliJ / Android Studio
 .idea
