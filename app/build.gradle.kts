@@ -77,6 +77,9 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
+    // OSMDroid (OpenStreetMap, no API key required)
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
+
     // Hilt (DI)
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-compiler:2.48")
