@@ -1,0 +1,35 @@
+name: smarttour_flutter
+description: SmartTour Flutter frontend – Map page (1 of 5 screens).
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # OpenStreetMap tile map
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+
+  # HTTP client for Kotlin backend API
+  http: ^1.2.1
+
+  # State management
+  provider: ^6.1.2
+
+  # Cached network images (stop image URLs)
+  cached_network_image: ^3.3.1
+
+  # Icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
