@@ -1,0 +1,44 @@
+name: smarttour
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI
+  cupertino_icons: ^1.0.8
+
+  # Maps
+  google_maps_flutter: ^2.9.0
+
+  # Location & sensors
+  geolocator: ^14.0.1
+  sensors_plus: ^7.0.0
+  flutter_compass: ^0.8.0
+
+  # Camera
+  camera: ^0.12.0+1
+
+  # Networking
+  http: ^1.2.0
+
+  # Permissions
+  permission_handler: ^11.3.0
+
+  # Maps utilities
+  flutter_polyline_points: ^2.1.0
+
+  # Images
+  cached_network_image: ^3.4.0
+
+  # Utils
+  intl: ^0.20.2
+  url_launcher: ^6.3.0
+  share_plus: ^13.1.0
+
+flutter:
+  uses-material-design: true
