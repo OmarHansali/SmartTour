@@ -27,7 +27,7 @@ server:
 
 smarttour:
   google-maps:
-    api-key: ${GOOGLE_MAPS_API_KEY:api_key_not_set}
+    api-key: ${GOOGLE_MAPS_API_KEY:your_api_key}
   ar:
     confidence-threshold: 0.6
   trip:

@@ -7,7 +7,15 @@ import '../models/trip.dart';
 import '../models/user.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8081/api';
+  // For USB tethering
+  // static const String baseUrl = 'http://192.168.243.1:8081/api';
+
+  // For PC Hotspot
+  static const String baseUrl = 'http://192.168.137.1:8081/api';
+
+  // For emulator
+  // static const String baseUrl = 'http://10.0.2.2:8081/api';
+
   static const String demoUserId = '550e8400-e29b-41d4-a716-446655440000';
   static const Duration _timeout = Duration(seconds: 15);
 

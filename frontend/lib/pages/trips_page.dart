@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import '../models/trip.dart';
 import '../services/api_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TripsPage extends StatefulWidget {
   const TripsPage({super.key});
@@ -38,19 +39,64 @@ class _TripsPageState extends State<TripsPage> {
   Future<void> _getLocation() async {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) return;
+      if (!serviceEnabled) {
+        debugPrint('Location service disabled');
+        return;
+      }
 
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
 
-      if (permission != LocationPermission.denied &&
-          permission != LocationPermission.deniedForever) {
-        _currentPosition = await Geolocator.getCurrentPosition();
+      if (permission == LocationPermission.deniedForever) {
+        debugPrint('Location permission permanently denied');
+        return;
+      }
+
+      if (permission != LocationPermission.denied) {
+        // Try fast last known position first
+        _currentPosition = await Geolocator.getLastKnownPosition();
+
+        // If no last position, get current with timeout
+        _currentPosition ??= await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.low, // faster than high
+        ).timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            debugPrint('GPS timeout — using default Marrakech coords');
+            return Position(
+              latitude: 31.6295,
+              longitude: -7.9811,
+              timestamp: DateTime.now(),
+              accuracy: 0,
+              altitude: 0,
+              altitudeAccuracy: 0,
+              heading: 0,
+              headingAccuracy: 0,
+              speed: 0,
+              speedAccuracy: 0,
+            );
+          },
+        );
+
+        debugPrint('Position: ${_currentPosition?.latitude}, ${_currentPosition?.longitude}');
       }
     } catch (e) {
       debugPrint('Location error: $e');
+      // Fallback to Marrakech center
+      _currentPosition = Position(
+        latitude: 31.6295,
+        longitude: -7.9811,
+        timestamp: DateTime.now(),
+        accuracy: 0,
+        altitude: 0,
+        altitudeAccuracy: 0,
+        heading: 0,
+        headingAccuracy: 0,
+        speed: 0,
+        speedAccuracy: 0,
+      );
     }
   }
 
@@ -340,11 +386,47 @@ class _TripsPageState extends State<TripsPage> {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
-                    onPressed: () {
-                      // Would open maps with route
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Opening navigation...')),
-                      );
+                    onPressed: () async {
+                      if (trip.places.isEmpty) return;
+
+                      // Use current GPS position as origin
+                      final hasLocation = _currentPosition != null;
+                      final originLat = hasLocation
+                          ? _currentPosition!.latitude
+                          : trip.places.first.latitude;
+                      final originLng = hasLocation
+                          ? _currentPosition!.longitude
+                          : trip.places.first.longitude;
+
+                      final destination = trip.places.last;
+                      final waypoints = trip.places.length > 1
+                          ? trip.places
+                              .sublist(0, trip.places.length - 1) // all stops except last
+                              .map((p) => '${p.latitude},${p.longitude}')
+                              .join('|')
+                          : '';
+
+                      String url =
+                          'https://www.google.com/maps/dir/?api=1'
+                          '&origin=$originLat,$originLng'           // ← starts from YOUR location
+                          '&destination=${destination.latitude},${destination.longitude}'
+                          '&travelmode=walking';
+
+                      if (waypoints.isNotEmpty) {
+                        url += '&waypoints=$waypoints';
+                      }
+
+                      final uri = Uri.parse(url);
+
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Google Maps not found on this device')),
+                          );
+                        }
+                      }
                     },
                     icon: const Icon(Icons.navigation),
                     label: const Text('Start Navigation'),
